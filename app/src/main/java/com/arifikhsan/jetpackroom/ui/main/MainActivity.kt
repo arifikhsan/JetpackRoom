@@ -2,6 +2,8 @@ package com.arifikhsan.jetpackroom.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arifikhsan.jetpackroom.R
 import com.arifikhsan.jetpackroom.databinding.ActivityMainBinding
 import com.arifikhsan.jetpackroom.entity.Note
+import com.arifikhsan.jetpackroom.helper.SortUtils
 import com.arifikhsan.jetpackroom.helper.ViewModelFactory
 import com.arifikhsan.jetpackroom.ui.insert.NoteAddUpdateActivity
 import com.arifikhsan.jetpackroom.ui.insert.NoteAddUpdateActivity.Companion.REQUEST_ADD
@@ -24,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private var _activityMainBinding: ActivityMainBinding? = null
     private val binding get() = _activityMainBinding
+    private lateinit var mainViewModel: MainViewModel
 
     private lateinit var adapter: NotePagedListAdapter
 
@@ -33,8 +37,8 @@ class MainActivity : AppCompatActivity() {
         _activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        val mainViewModel = obtainViewModel(this@MainActivity)
-        mainViewModel.getAllNotes().observe(this, noteObserver)
+        mainViewModel = obtainViewModel(this@MainActivity)
+        mainViewModel.getAllNotes(SortUtils.NEWEST).observe(this, noteObserver)
 
         adapter = NotePagedListAdapter(this@MainActivity)
 
@@ -86,5 +90,23 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _activityMainBinding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        var sort = ""
+        when (item.itemId) {
+            R.id.action_newest -> sort = SortUtils.NEWEST
+            R.id.action_oldest -> sort = SortUtils.OLDEST
+            R.id.action_random -> sort = SortUtils.RANDOM
+        }
+
+        mainViewModel.getAllNotes(sort).observe(this, noteObserver)
+        item.isChecked = true
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -5,6 +5,7 @@ import androidx.paging.DataSource
 import com.arifikhsan.jetpackroom.database.NoteDao
 import com.arifikhsan.jetpackroom.database.NoteRoomDatabase
 import com.arifikhsan.jetpackroom.entity.Note
+import com.arifikhsan.jetpackroom.helper.SortUtils
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -29,5 +30,10 @@ class NoteRepository(application: Application) {
 
     fun delete(note: Note) {
         executorService.execute { mNotesDao.delete(note) }
+    }
+
+    fun getAllNotes(sort: String): DataSource.Factory<Int, Note> {
+        val query = SortUtils.getSortedQuery(sort)
+        return mNotesDao.getAllNotes(query)
     }
 }
