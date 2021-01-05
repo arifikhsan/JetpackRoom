@@ -25,5 +25,4 @@ interface NoteDao {
 
     @RawQuery(observedEntities = [Note::class])
     fun getAllNotes(query: SupportSQLiteQuery): DataSource.Factory<Int, Note>
-
 }

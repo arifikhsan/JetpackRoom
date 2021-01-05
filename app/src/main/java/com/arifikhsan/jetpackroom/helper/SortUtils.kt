@@ -8,7 +8,7 @@ object SortUtils {
     const val RANDOM = "Random"
 
     fun getSortedQuery(filter: String): SimpleSQLiteQuery {
-        val simpleQuery = StringBuilder().append("SELECT * FROM note ")
+        val simpleQuery = StringBuilder().append("SELECT * FROM notes ")
 
         when (filter) {
             NEWEST -> {
